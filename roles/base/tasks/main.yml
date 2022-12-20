@@ -1,0 +1,31 @@
+---
+- name: Ping All Hosts
+  ping:
+
+- name: Ensure '{{ ssmtp_package_name }}' package is installed
+  package:
+    name: "{{ ssmtp_package_name }}"
+    state: present
+
+- name: Copy '{{ ssmtp_config_path }}'
+  template:
+    src: ssmtp/ssmtp.conf.j2
+    dest: '{{ ssmtp_config_path }}'
+    owner: root
+    group: mail
+    mode: 0440
+
+- name: Copy root user configuration files
+  copy:
+    src: 'skel.d/{{ item }}'
+    dest: '/root/{{ item }}'
+    owner: root
+    group: root
+    mode: 0644
+    directory_mode: 0755
+    backup: true
+  with_items:
+  - .tmux.conf
+  - .vim/colors
+  - .vim/colors/molokai.vim
+  - .vimrc

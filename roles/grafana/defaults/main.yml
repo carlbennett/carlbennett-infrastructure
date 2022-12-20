@@ -1,0 +1,4 @@
+---
+grafana_package_name: 'grafana'
+grafana_port: 3000
+grafana_service_systemd: 'grafana-server'

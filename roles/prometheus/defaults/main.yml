@@ -1,0 +1,50 @@
+---
+# The port that prometheus uses. The default is 9090.
+prometheus_port: 9090
+
+# The port that prometheus-alertmanager uses. The default is 9093.
+prometheus_alertmanager_port: 9093
+
+# Set the scrape interval to every 15 seconds. Default is every 1 minute.
+prometheus_global_scrape_interval: '15s'
+
+# Evaluate rules every 15 seconds. The default is every 1 minute.
+prometheus_global_evaluation_interval: '15s'
+
+# Scrape timeout is set to the global default (10s).
+prometheus_global_scrape_timeout: '10s'
+
+# The name used in the "From" header in alert emails.
+prometheus_alertmanager_smtp_from: 'prometheus-alertmanager@{{ smtp_rewritedomain }}'
+
+# The labels by which incoming alerts are grouped together. For example,
+# multiple alerts coming in for cluster=A and alertname=LatencyHigh would
+# be batched into a single group.
+prometheus_alertmanager_route_group_by: ['alertname', 'cluster', 'service']
+
+# When a new group of alerts is created by an incoming alert, wait at
+# least 'group_wait' to send the initial notification.
+# This way ensures that you get multiple alerts for the same group that start
+# firing shortly after another are batched together on the first
+# notification.
+prometheus_alertmanager_route_group_wait: '30s'
+
+# When the first notification was sent, wait 'group_interval' to send a batch
+# of new alerts that started firing for that group.
+prometheus_alertmanager_route_group_interval: '5m'
+
+# If an alert has successfully been sent, wait 'repeat_interval' to
+# resend them.
+prometheus_alertmanager_route_repeat_interval: '3h'
+
+# Default alertmanager routes.
+prometheus_alertmanager_routes: []
+
+# Default alertmanager receiver targets.
+prometheus_alertmanager_receivers:
+- name: 'default'
+  email_configs:
+  - to: '{{ prometheus_alertmanager_default_email }}'
+
+# Default node exporter targets beyond localhost.
+prometheus_node_exporter_targets: []

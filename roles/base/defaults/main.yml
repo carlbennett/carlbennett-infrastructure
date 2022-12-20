@@ -1,0 +1,3 @@
+---
+ssmtp_config_path: '/etc/ssmtp/ssmtp.conf'
+ssmtp_package_name: 'ssmtp'

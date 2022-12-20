@@ -1,0 +1,32 @@
+---
+- name: "Ensure '{{ plex_package_name }}' package is installed"
+  package:
+    name: "{{ plex_package_name }}"
+    state: present
+
+- name: "Copy '{{ plex_service_firewalld }}' service definition to firewalld"
+  template:
+    src: templates/firewalld/plexmediaserver_service.xml.j2
+    dest: "/etc/firewalld/services/{{ plex_service_firewalld }}.xml"
+    owner: root
+    group: root
+    mode: 0444
+  register: plex_service_firewalld_state
+
+- name: Reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+  when: plex_service_firewalld_state is changed
+
+- name: "Permit traffic in default zone for '{{ plex_service_firewalld }}' service"
+  ansible.posix.firewalld:
+    service: "{{ plex_service_firewalld }}"
+    permanent: yes
+    state: enabled
+
+- name: "Enable and start '{{ plex_service_systemd }}'"
+  service:
+    name: "{{ plex_service_systemd }}"
+    enabled: yes
+    state: started

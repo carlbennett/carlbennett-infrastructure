@@ -1,0 +1,34 @@
+---
+- name: Converge all hosts
+  hosts: all
+  gather_facts: true
+  become: true
+  become_user: root
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Include base role
+      include_role:
+        name: '../roles/base'
+
+    - name: Include Grafana role
+      include_role:
+        name: '../roles/grafana'
+      when: "'grafana_servers' in group_names"
+
+    - name: Include Nginx role
+      include_role:
+        name: '../roles/nginx'
+      when: "'nginx_servers' in group_names"
+
+    - name: Include Plex role
+      include_role:
+        name: '../roles/plex'
+      when: "'plex_servers' in group_names or ansible_facts.packages['plexmediaserver'] is defined"
+
+    - name: Include Prometheus role
+      include_role:
+        name: '../roles/prometheus'
+      when: "'prometheus_servers' in group_names"

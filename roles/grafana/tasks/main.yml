@@ -1,0 +1,31 @@
+---
+- name: Ensure latest '{{ grafana_package_name }}' package is installed
+  package:
+    name: "{{ grafana_package_name }}"
+    state: latest
+
+- name: Enable and start '{{ grafana_service_systemd }}' service
+  service:
+    name: "{{ grafana_service_systemd }}"
+    enabled: yes
+    state: started
+
+- name: Install or update Grafana plugins
+  community.grafana.grafana_plugin:
+    name: "{{ item }}"
+    version: latest
+    state: present
+  with_items:
+    - cloudflare-app
+    - grafana-clock-panel
+    - grafana-github-datasource
+    - grafana-gitlab-datasource
+    - grafana-image-renderer
+    - grafana-worldmap-panel
+  register: grafana_plugins_state
+
+- name: Restart Grafana
+  service:
+    name: "{{ grafana_service_systemd }}"
+    state: restarted
+  when: grafana_plugins_state is changed

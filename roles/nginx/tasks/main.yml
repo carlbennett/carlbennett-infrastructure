@@ -1,0 +1,30 @@
+---
+- name: Install or update '{{ nginx_package_name }}' package
+  package:
+    name: '{{ nginx_package_name }}'
+    state: latest
+  register: nginx_package_state
+
+- name: Restart nginx
+  service:
+    name: '{{ nginx_service_name }}'
+    state: restarted
+  when: nginx_package_state is changed
+
+- name: Permit traffic in default zone for 'http' service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+
+- name: Permit traffic in default zone for 'https' service
+  ansible.posix.firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+
+- name: Enable and start '{{ nginx_service_name }}'
+  service:
+    name: '{{ nginx_service_name }}'
+    enabled: yes
+    state: started

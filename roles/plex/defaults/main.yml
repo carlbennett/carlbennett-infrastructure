@@ -1,0 +1,5 @@
+---
+plex_package_name: 'plexmediaserver'
+plex_port: 32400
+plex_service_firewalld: 'plextv'
+plex_service_systemd: 'plexmediaserver'

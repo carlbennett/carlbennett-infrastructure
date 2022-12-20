@@ -1,0 +1,47 @@
+---
+- name: Ensure Prometheus packages are installed
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+  - golang-github-prometheus
+  - golang-github-prometheus-alertmanager
+
+- name: Copy Prometheus configuration
+  template:
+    src: prometheus/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: 0444
+  register: prometheus_config_state
+
+- name: Copy Prometheus Alertmanager configuration
+  template:
+    src: prometheus/alertmanager.yml.j2
+    dest: /etc/prometheus/alertmanager.yml
+    owner: root
+    group: root
+    mode: 0444
+  register: prometheus_alertmanager_config_state
+
+- name: Restart Prometheus service
+  service:
+    name: prometheus
+    state: restarted
+  when: prometheus_config_state is changed
+
+- name: Restart Prometheus Alertmanager service
+  service:
+    name: prometheus-alertmanager
+    state: restarted
+  when: prometheus_alertmanager_config_state is changed
+
+- name: Enable and start Prometheus services
+  service:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+  with_items:
+  - prometheus
+  - prometheus-alertmanager
