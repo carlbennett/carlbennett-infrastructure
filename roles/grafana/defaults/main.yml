@@ -1,4 +1,18 @@
 ---
+# The system package name for Grafana.
 grafana_package_name: 'grafana'
+
+# The service unit name for Grafana.
+grafana_service_name: 'grafana-server'
+
+# The TCP port that Grafana will listen on.
 grafana_port: 3000
-grafana_service_systemd: 'grafana-server'
+
+# The url to the Grafana instance.
+grafana_url: 'http://localhost:3000/'
+
+# The service account user to use with Grafana API.
+grafana_sa_user: 'ansible'
+
+# The service account API token that acts as the password.
+grafana_sa_password: ''

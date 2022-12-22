@@ -4,9 +4,9 @@
     name: "{{ grafana_package_name }}"
     state: latest
 
-- name: Enable and start '{{ grafana_service_systemd }}' service
+- name: Enable and start '{{ grafana_service_name }}' service
   service:
-    name: "{{ grafana_service_systemd }}"
+    name: "{{ grafana_service_name }}"
     enabled: yes
     state: started
 
@@ -26,6 +26,6 @@
 
 - name: Restart Grafana
   service:
-    name: "{{ grafana_service_systemd }}"
+    name: "{{ grafana_service_name }}"
     state: restarted
   when: grafana_plugins_state is changed
