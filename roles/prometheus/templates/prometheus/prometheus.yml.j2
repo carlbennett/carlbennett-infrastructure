@@ -11,7 +11,13 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-    monitor: '{{ ansible_facts['hostname'] }}'
+{% if prometheus_external_labels is defined %}
+{% for label_key, label_value in prometheus_external_labels.items() %}
+    {{ label_key }}: '{{ label_value }}'
+{% endfor %}
+{% else %}
+    monitor: '{{ ansible_facts['fqdn'] }}'
+{% endif %}
 
 # Alertmanager configuration
 alerting:
@@ -37,19 +43,18 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ['localhost:{{ prometheus_port }}']
+    - targets: ['localhost:{{ prometheus_port }}']
+{% for scrape_config in prometheus_scrape_configs %}
 
-  - job_name: node
-    # If prometheus-node-exporter is installed, grab stats about the local
-    # machine by default.
+  - job_name: '{{ scrape_config.job_name }}'
     static_configs:
-      - targets: ['localhost:9100']
-{% for item in prometheus_node_exporter_targets %}
-      - targets: {{ item.targets }}
-{% if item.labels is defined %}
-        labels:
-{% for key, value in item.labels.items() %}
-          {{ key }}: '{{ value }}'
+{% for static_config in scrape_config.static_configs %}
+    - targets: ['{{ static_config.targets | join("','") }}']
+{% if static_config.labels is defined %}
+      labels:
+{% for label_key, label_value in static_config.labels.items() %}
+        {{ label_key }}: '{{ label_value }}'
 {% endfor %}
 {% endif %}
+{% endfor %}
 {% endfor %}
