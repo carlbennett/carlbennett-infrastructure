@@ -37,6 +37,13 @@
     state: restarted
   when: prometheus_alertmanager_config_state is changed
 
+- name: Remove Cockpit Web Service package (conflicts with Prometheus port 9090)
+  package:
+    name: 'cockpit-ws'
+    state: absent
+  when:
+    prometheus_port == 9090
+
 - name: Enable and start Prometheus services
   service:
     name: '{{ item }}'
