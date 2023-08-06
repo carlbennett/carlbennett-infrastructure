@@ -24,6 +24,8 @@ alerting:
   alertmanagers:
   - static_configs:
     - targets: ['localhost:{{ prometheus_alertmanager_port }}']
+      labels:
+        instance: '{{ ansible_facts['fqdn'] }}:{{ prometheus_alertmanager_port }}'
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
@@ -32,21 +34,38 @@ rule_files:
 
 # Scrape configuration
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
     scrape_timeout: 5s
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
     static_configs:
     - targets: ['localhost:{{ prometheus_port }}']
+      labels:
+        instance: '{{ ansible_facts['fqdn'] }}:{{ prometheus_port }}'
 {% for scrape_config in prometheus_scrape_configs %}
 
   - job_name: '{{ scrape_config.job_name }}'
+{% if scrape_config.scrape_interval is defined %}
+    scrape_interval: '{{ scrape_config.scrape_interval }}'
+{% endif %}
+{% if scrape_config.honor_labels is defined %}
+    honor_labels: {{ scrape_config.honor_labels }}
+{% endif %}
+{% if scrape_config.scheme is defined %}
+    metrics_path: '{{ scrape_config.scheme }}'
+{% endif %}
+{% if scrape_config.metrics_path is defined %}
+    metrics_path: '{{ scrape_config.metrics_path }}'
+{% endif %}
+{% if scrape_config.params is defined %}
+    params:
+{% for param_key, param_values in scrape_config.params.items() %}
+      '{{ param_key }}':
+{% for param_item in param_values %}
+        - '{{ param_item }}'
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% if scrape_config.static_configs is defined %}
     static_configs:
 {% for static_config in scrape_config.static_configs %}
     - targets: ['{{ static_config.targets | join("','") }}']
@@ -57,4 +76,5 @@ scrape_configs:
 {% endfor %}
 {% endif %}
 {% endfor %}
+{% endif %}
 {% endfor %}
