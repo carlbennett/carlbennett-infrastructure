@@ -41,40 +41,6 @@ scrape_configs:
     - targets: ['localhost:{{ prometheus_port }}']
       labels:
         instance: '{{ ansible_facts['fqdn'] }}:{{ prometheus_port }}'
-{% for scrape_config in prometheus_scrape_configs %}
-
-  - job_name: '{{ scrape_config.job_name }}'
-{% if scrape_config.scrape_interval is defined %}
-    scrape_interval: '{{ scrape_config.scrape_interval }}'
+{% if prometheus_scrape_configs is defined %}
+{{ prometheus_scrape_configs | to_yaml(indent=2) | indent(width=2, first=True) }}
 {% endif %}
-{% if scrape_config.honor_labels is defined %}
-    honor_labels: {{ scrape_config.honor_labels }}
-{% endif %}
-{% if scrape_config.scheme is defined %}
-    metrics_path: '{{ scrape_config.scheme }}'
-{% endif %}
-{% if scrape_config.metrics_path is defined %}
-    metrics_path: '{{ scrape_config.metrics_path }}'
-{% endif %}
-{% if scrape_config.params is defined %}
-    params:
-{% for param_key, param_values in scrape_config.params.items() %}
-      '{{ param_key }}':
-{% for param_item in param_values %}
-        - '{{ param_item }}'
-{% endfor %}
-{% endfor %}
-{% endif %}
-{% if scrape_config.static_configs is defined %}
-    static_configs:
-{% for static_config in scrape_config.static_configs %}
-    - targets: ['{{ static_config.targets | join("','") }}']
-{% if static_config.labels is defined %}
-      labels:
-{% for label_key, label_value in static_config.labels.items() %}
-        {{ label_key }}: '{{ label_value }}'
-{% endfor %}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
