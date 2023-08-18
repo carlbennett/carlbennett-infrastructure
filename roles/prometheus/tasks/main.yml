@@ -41,8 +41,7 @@
   package:
     name: 'cockpit-ws'
     state: absent
-  when:
-    prometheus_port == 9090
+  when: prometheus_port == 9090
 
 - name: Enable and start Prometheus services
   service:
