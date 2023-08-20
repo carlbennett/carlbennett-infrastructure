@@ -1,0 +1,43 @@
+---
+- name: Ensure infping packages are installed
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+  - fping
+  - influxdb
+
+- name: Copy Infping binary
+  file:
+    src: infping/infping
+    dest: /usr/local/bin/infping
+    owner: root
+    group: root
+    mode: 0555
+  register: infping_bin_state
+
+- name: Copy Infping configuration
+  template:
+    src: infping/config.toml.j2
+    dest: /etc/infping/infping.toml
+    owner: root
+    group: root
+    mode: 0444
+  register: infping_config_state
+
+- name: Install Infping service (TODO; and TODO SystemD Reload)
+  file:
+    src: infping/infping.service
+    dest: /etc/systemd/system/infping.service
+    owner: root
+    group: root
+    mode: 0444
+  register: infping_service_file_state
+
+- name: Restart Infping service
+  service:
+    name: infping
+    state: restarted
+  when:
+  - infping_bin_state is changed
+  - infping_config_state is changed

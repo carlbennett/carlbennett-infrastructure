@@ -1,0 +1,18 @@
+[influxdb]
+host = "127.0.0.1"
+port = "8086"
+db = "ping"
+measurement = "ping"
+user = "ping"
+pass = "pong"
+
+[hosts]
+{% if infping_targets is defined %}
+hosts = [
+{% for target in infping_targets %}
+    "{{ target }}",
+{% endfor %}
+]
+{% else %}
+hosts = []
+{% endif %}

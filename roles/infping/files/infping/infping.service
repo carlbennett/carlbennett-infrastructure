@@ -1,0 +1,17 @@
+[Unit]
+Description=infPing
+Documentation=https://github.com/torhve/infping
+After=network.target
+
+[Service]
+Type=idle
+User=root
+ExecStart=/usr/local/bin/infping
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+RestartSec=1s
+Restart=always
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

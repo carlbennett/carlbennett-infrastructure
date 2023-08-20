@@ -18,10 +18,25 @@
         name: '../roles/grafana'
       when: "'grafana_servers' in group_names"
 
-    - name: Include Nginx role
+    - name: Include Infping role
       include_role:
-        name: '../roles/nginx'
+        name: '../roles/infping'
+      when: "'infping_servers' in group_names"
+
+    - name: Include Nginx Custom role
+      include_role:
+        name: '../roles/nginx_custom'
       when: "'nginx_servers' in group_names"
+
+    - name: Include Nginxinc Nginx role
+      include_role:
+        name: '../roles/nginxinc_nginx'
+      when: "'nginxinc_nginx_servers' in group_names"
+
+    - name: Include Nginxinc Nginx Config role
+      include_role:
+        name: '../roles/nginxinc_nginx_config'
+      when: "'nginxinc_nginx_servers' in group_names"
 
     - name: Include Node Exporter for Prometheus role
       include_role:
