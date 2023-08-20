@@ -1,0 +1,6 @@
+[submodule "roles/nginxinc_nginx"]
+	path = roles/nginxinc_nginx
+	url = https://github.com/nginxinc/ansible-role-nginx.git
+[submodule "roles/nginxinc_nginx_config"]
+	path = roles/nginxinc_nginx_config
+	url = https://github.com/nginxinc/ansible-role-nginx-config.git
