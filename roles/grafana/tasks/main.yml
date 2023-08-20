@@ -24,6 +24,37 @@
     - grafana-worldmap-panel
   register: grafana_plugins_state
 
+- name: 'Create static web root'
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+  - '/var/www'
+  - '/var/www/{{ ansible_facts["fqdn"] }}'
+
+- name: 'Create screenshot storage directory'
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: nginx
+    group: root
+    mode: 0755
+  with_items:
+  - '/var/www/{{ ansible_facts["fqdn"] }}/share'
+  - '/var/www/{{ ansible_facts["fqdn"] }}/upload'
+
+- name: 'Enable SELinux booleans for Grafana reverse proxy backend connectivity'
+  ansible.posix.seboolean:
+    name: '{{ item }}'
+    state: true
+    persistent: true
+  with_items:
+  - 'httpd_can_network_connect'
+  - 'httpd_can_network_connect_db'
+
 - name: Restart Grafana
   service:
     name: "{{ grafana_service_name }}"
