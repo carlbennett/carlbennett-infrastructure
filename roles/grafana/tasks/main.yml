@@ -15,13 +15,7 @@
     name: "{{ item }}"
     version: latest
     state: present
-  with_items:
-    - cloudflare-app
-    - grafana-clock-panel
-    - grafana-github-datasource
-    - grafana-gitlab-datasource
-    - grafana-image-renderer
-    - grafana-worldmap-panel
+  loop: '{{ grafana_plugins }}'
   register: grafana_plugins_state
 
 - name: 'Create static web root'

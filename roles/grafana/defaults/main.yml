@@ -11,6 +11,16 @@ grafana_port: 3000
 # The url to the Grafana instance.
 grafana_url: 'http://localhost:3000/'
 
+# Grafana plugins to install and keep updated.
+grafana_plugins:
+- 'cloudflare-app'
+- 'grafana-clock-panel'
+- 'grafana-github-datasource'
+- 'grafana-gitlab-datasource'
+- 'grafana-image-renderer'
+- 'grafana-simple-json-datasource'
+- 'grafana-worldmap-panel'
+
 # The service account user to use with Grafana API.
 grafana_sa_user: 'ansible'
 
