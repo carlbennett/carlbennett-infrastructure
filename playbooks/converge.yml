@@ -23,6 +23,11 @@
         name: '../roles/infping'
       when: "'infping_servers' in group_names"
 
+    - name: Include Jenkins role
+      include_role:
+        name: '../roles/jenkins'
+      when: "'jenkins_servers' in group_names"
+
     - name: Include Nginx Custom role
       include_role:
         name: '../roles/nginx_custom'
