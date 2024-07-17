@@ -1,3 +1,104 @@
 ---
+base_packages:
+  default:
+    - curl
+    - git
+    - wget
+  almalinux:
+    - bind-utils
+    - bzip2
+    - curl
+    - firewalld
+    - git
+    - gzip
+    - htop
+    - mtr
+    - net-tools
+    - nmap-ncat
+    - tar
+    - tmux
+    - traceroute
+    - unzip
+    - vim-enhanced
+    - wget
+    - whois
+    - zip
+  centos:
+    - bind-utils
+    - bzip2
+    - curl
+    - firewalld
+    - git
+    - gzip
+    - htop
+    - mtr
+    - net-tools
+    - nmap-ncat
+    - tar
+    - tmux
+    - traceroute
+    - unzip
+    - vim-enhanced
+    - wget
+    - whois
+    - zip
+  fedora:
+    - bind-utils
+    - bzip2
+    - curl
+    - firewalld
+    - git
+    - gzip
+    - htop
+    - mtr
+    - net-tools
+    - nmap-ncat
+    - tar
+    - tmux
+    - traceroute
+    - unzip
+    - vim-enhanced
+    - wget
+    - whois
+    - zip
+  redhat:
+    - bind-utils
+    - bzip2
+    - curl
+    - firewalld
+    - git
+    - gzip
+    - htop
+    - mtr
+    - net-tools
+    - nmap-ncat
+    - tar
+    - tmux
+    - traceroute
+    - unzip
+    - vim-enhanced
+    - wget
+    - whois
+    - zip
+  rocky:
+    - bind-utils
+    - bzip2
+    - curl
+    - firewalld
+    - git
+    - gzip
+    - htop
+    - mtr
+    - net-tools
+    - nmap-ncat
+    - tar
+    - tmux
+    - traceroute
+    - unzip
+    - vim-enhanced
+    - wget
+    - whois
+    - zip
+
 ssmtp_config_path: '/etc/ssmtp/ssmtp.conf'
 ssmtp_package_name: 'ssmtp'

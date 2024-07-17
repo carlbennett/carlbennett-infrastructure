@@ -29,3 +29,9 @@
   - .vim/colors
   - .vim/colors/molokai.vim
   - .vimrc
+
+- name: Install '{{ ansible_distribution|lower }}' base packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ base_packages[ansible_distribution|lower] | default(base_packages['default']) }}"
