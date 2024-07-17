@@ -8,7 +8,28 @@ jobs:
   build:
     name: Ansible Lint # Naming the build is important to use it as a status check
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
+      # Cache Ansible Galaxy roles
+      - name: Cache Ansible roles
+        uses: actions/cache@v3
+        with:
+          path: ~/.ansible/roles
+          key: ${{ runner.os }}-ansible-${{ hashFiles('**/requirements.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-ansible-
+
+      # Cache pip dependencies
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Lint
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main # or version tag instead of 'main'
