@@ -1,0 +1,13 @@
+---
+jenkins_packages: 
+- 'fontconfig'
+- 'java-11-openjdk-headless'
+- 'jenkins'
+
+jenkins_repo_file_name: 'jenkins'
+
+jenkins_service_firewalld: 'jenkins'
+jenkins_service_systemd: 'jenkins.service'
+jenkins_environment_file: 'jenkins'
+
+jenkins_port: 8080
