@@ -1,8 +1,8 @@
 ---
-- name: Ping All Hosts
+- name: Ping all hosts
   ansible.builtin.ping:
 
-- name: Install '{{ ansible_distribution | lower }}' base packages
+- name: Install base packages
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
