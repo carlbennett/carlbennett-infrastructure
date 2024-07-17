@@ -11,49 +11,49 @@
 
     - name: Include base role
       ansible.builtin.include_role:
-        name: '../roles/base'
+        name: base
 
     - name: Include Grafana role
       ansible.builtin.include_role:
-        name: '../roles/grafana'
+        name: grafana
       when: "'grafana_servers' in group_names"
 
     - name: Include Infping role
       ansible.builtin.include_role:
-        name: '../roles/infping'
+        name: infping
       when: "'infping_servers' in group_names"
 
     - name: Include Jenkins role
       ansible.builtin.include_role:
-        name: '../roles/jenkins'
+        name: jenkins
       when: "'jenkins_servers' in group_names"
 
     - name: Include Nginx Custom role
       ansible.builtin.include_role:
-        name: '../roles/nginx_custom'
+        name: nginx_custom
       when: "'nginx_servers' in group_names"
 
     - name: Include Nginxinc Nginx role
       ansible.builtin.include_role:
-        name: '../roles/nginxinc_nginx'
+        name: nginxinc_nginx
       when: "'nginxinc_nginx_servers' in group_names"
 
     - name: Include Nginxinc Nginx Config role
       ansible.builtin.include_role:
-        name: '../roles/nginxinc_nginx_config'
+        name: nginxinc_nginx_config
       when: "'nginxinc_nginx_servers' in group_names"
 
     - name: Include Node Exporter for Prometheus role
       ansible.builtin.include_role:
-        name: '../roles/node_exporter'
+        name: node_exporter
       when: "'node_exporter_servers' in group_names"
 
     - name: Include Plex role
       ansible.builtin.include_role:
-        name: '../roles/plex'
+        name: plex
       when: "'plex_servers' in group_names or ansible_facts.packages['plexmediaserver'] is defined"
 
     - name: Include Prometheus role
       ansible.builtin.include_role:
-        name: '../roles/prometheus'
+        name: prometheus
       when: "'prometheus_servers' in group_names"
