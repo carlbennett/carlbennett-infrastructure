@@ -1,45 +1,45 @@
 ---
 - name: "Ensure '{{ jenkins_repo_file_name }}' repo template is present"
-  template:
+  ansible.builtin.template:
     src: jenkins/jenkins.repo.j2
     dest: '/etc/yum.repos.d/{{ jenkins_repo_file_name }}.repo'
     owner: root
     group: root
-    mode: 0444
+    mode: '444'
 
 - name: 'Ensure packages are installed'
-  package:
+  ansible.builtin.package:
     name: "{{ jenkins_packages }}"
     state: present
 
 - name: 'Copy {{ jenkins_environment_file }} service environment configuration'
-  template:
+  ansible.builtin.template:
     src: jenkins/jenkins.env.j2
     dest: '/etc/sysconfig/{{ jenkins_environment_file }}'
     owner: root
     group: root
-    mode: 0444
+    mode: '444'
   register: jenkins_environment_config_state
 
 - name: 'Reload SystemD Daemon'
-  shell: 'systemctl daemon-reload'
+  ansible.builtin.shell: 'systemctl daemon-reload'
   when:
-  - jenkins_environment_config_dir_state is changed
-  - jenkins_environment_config_state is changed
+    - jenkins_environment_config_dir_state is changed
+    - jenkins_environment_config_state is changed
 
 # TODO
 
 - name: "Copy '{{ jenkins_service_firewalld }}' service definition to firewalld"
-  template:
+  ansible.builtin.template:
     src: firewalld/jenkins_service.xml.j2
     dest: "/etc/firewalld/services/{{ jenkins_service_firewalld }}.xml"
     owner: root
     group: root
-    mode: 0444
+    mode: '444'
   register: jenkins_service_firewalld_state
 
 - name: Reload firewalld
-  service:
+  ansible.builtin.service:
     name: firewalld
     state: reloaded
   when: jenkins_service_firewalld_state is changed
@@ -51,7 +51,7 @@
     state: enabled
 
 - name: "Enable and start '{{ jenkins_service_systemd }}'"
-  service:
+  ansible.builtin.service:
     name: "{{ jenkins_service_systemd }}"
     enabled: yes
     state: started

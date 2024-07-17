@@ -1,19 +1,19 @@
 ---
 - name: Ensure latest '{{ grafana_package_name }}' package is installed
-  package:
+  ansible.builtin.package:
     name: "{{ grafana_package_name }}"
     state: 'latest'
 
 - name: Create Grafana configuration from template
-  template:
+  ansible.builtin.template:
     src: 'grafana/grafana.ini.j2'
     dest: '/etc/grafana/grafana.ini'
     owner: 'root'
     group: 'root'
-    mode: 0444
+    mode: '444'
 
 - name: Enable and start '{{ grafana_service_name }}' service
-  service:
+  ansible.builtin.service:
     name: "{{ grafana_service_name }}"
     enabled: yes
     state: 'started'
@@ -36,26 +36,26 @@
   register: grafana_datasources_present_state
 
 - name: 'Create static web root'
-  file:
+  ansible.builtin.file:
     path: '{{ item }}'
     state: 'directory'
     owner: 'root'
     group: 'root'
-    mode: 0755
+    mode: '755'
   with_items:
-  - '/var/www'
-  - '/var/www/{{ ansible_facts["fqdn"] }}'
+    - '/var/www'
+    - '/var/www/{{ ansible_facts["fqdn"] }}'
 
 - name: 'Create external image storage directories'
-  file:
+  ansible.builtin.file:
     path: '{{ item }}'
     state: 'directory'
     owner: 'nginx'
     group: 'root'
-    mode: 0755
+    mode: '755'
   with_items:
-  - '/var/www/{{ ansible_facts["fqdn"] }}/share'
-  - '/var/www/{{ ansible_facts["fqdn"] }}/upload'
+    - '/var/www/{{ ansible_facts["fqdn"] }}/share'
+    - '/var/www/{{ ansible_facts["fqdn"] }}/upload'
 
 - name: 'Enable SELinux booleans for Grafana reverse proxy backend connectivity'
   ansible.posix.seboolean:
@@ -63,13 +63,13 @@
     state: true
     persistent: true
   with_items:
-  - 'httpd_can_network_connect'
-  - 'httpd_can_network_connect_db'
+    - 'httpd_can_network_connect'
+    - 'httpd_can_network_connect_db'
 
 - name: Restart Grafana
-  service:
+  ansible.builtin.service:
     name: "{{ grafana_service_name }}"
     state: 'restarted'
   when:
-  - grafana_plugins_state is changed
-  - grafana_datasources_present_state is changed
+    - grafana_plugins_state is changed
+    - grafana_datasources_present_state is changed
