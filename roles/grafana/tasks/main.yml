@@ -2,39 +2,56 @@
 - name: Ensure latest '{{ grafana_package_name }}' package is installed
   package:
     name: "{{ grafana_package_name }}"
-    state: latest
+    state: 'latest'
+
+- name: Create Grafana configuration from template
+  template:
+    src: 'grafana/grafana.ini.j2'
+    dest: '/etc/grafana/grafana.ini'
+    owner: 'root'
+    group: 'root'
+    mode: 0444
 
 - name: Enable and start '{{ grafana_service_name }}' service
   service:
     name: "{{ grafana_service_name }}"
     enabled: yes
-    state: started
+    state: 'started'
 
 - name: Install or update Grafana plugins
   community.grafana.grafana_plugin:
     name: "{{ item }}"
-    version: latest
-    state: present
+    version: 'latest'
+    state: 'present'
   loop: '{{ grafana_plugins }}'
   register: grafana_plugins_state
+
+- name: Setup Grafana data sources
+  grafana.grafana.datasource:
+    dataSource: '{{ item }}'
+    grafana_api_key: '{{ grafana_api_key }}'
+    grafana_url: '{{ grafana_url }}'
+    state: 'present'
+  loop: '{{ grafana_datasources }}'
+  register: grafana_datasources_present_state
 
 - name: 'Create static web root'
   file:
     path: '{{ item }}'
-    state: directory
-    owner: root
-    group: root
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
     mode: 0755
   with_items:
   - '/var/www'
   - '/var/www/{{ ansible_facts["fqdn"] }}'
 
-- name: 'Create screenshot storage directory'
+- name: 'Create external image storage directories'
   file:
     path: '{{ item }}'
-    state: directory
-    owner: nginx
-    group: root
+    state: 'directory'
+    owner: 'nginx'
+    group: 'root'
     mode: 0755
   with_items:
   - '/var/www/{{ ansible_facts["fqdn"] }}/share'
@@ -52,5 +69,7 @@
 - name: Restart Grafana
   service:
     name: "{{ grafana_service_name }}"
-    state: restarted
-  when: grafana_plugins_state is changed
+    state: 'restarted'
+  when:
+  - grafana_plugins_state is changed
+  - grafana_datasources_present_state is changed
