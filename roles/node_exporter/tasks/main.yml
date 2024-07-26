@@ -1,40 +1,40 @@
 ---
-- name: 'Ensure {{ prometheus_node_exporter_package_name }} package is installed'
+- name: 'Ensure Prometheus Node Exporter package is installed'
   ansible.builtin.package:
     name: '{{ prometheus_node_exporter_package_name }}'
-    state: present
+    state: 'present'
 
-- name: 'Copy {{ prometheus_node_exporter_environment_file }} service environment configuration'
+- name: 'Copy Prometheus Node Exporter service environment configuration'
   ansible.builtin.template:
-    src: prometheus/node_exporter.env.j2
+    src: 'prometheus/node_exporter.env.j2'
     dest: '/etc/sysconfig/{{ prometheus_node_exporter_environment_file }}'
-    owner: root
-    group: root
+    owner: 'root'
+    group: 'root'
     mode: '444'
   register: prometheus_node_exporter_environment_config_state
 
-- name: 'Create {{ prometheus_node_exporter_service_name }} service local configuration directory'
+- name: 'Create Prometheus Node Exporter service local configuration directory'
   ansible.builtin.file:
     path: '/etc/systemd/system/{{ prometheus_node_exporter_service_name }}.service.d'
-    state: directory
-    owner: root
-    group: root
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
     mode: '755'
   register: prometheus_node_exporter_service_config_dir_state
 
-- name: 'Copy {{ prometheus_node_exporter_service_name }} service local configuration'
+- name: 'Copy Prometheus Node Exporter service local configuration'
   ansible.builtin.template:
-    src: prometheus/node_exporter.service.j2
+    src: 'prometheus/node_exporter.service.j2'
     dest: '/etc/systemd/system/{{ prometheus_node_exporter_service_name }}.service.d/ansible.conf'
-    owner: root
-    group: root
+    owner: 'root'
+    group: 'root'
     mode: '444'
   register: prometheus_node_exporter_service_config_state
 
-- name: 'Remove pre-existing local installation'
+- name: 'Remove pre-existing Prometheus Node Exporter local installation'
   ansible.builtin.file:
     path: '{{ item }}'
-    state: absent
+    state: 'absent'
   with_items:
     - '/etc/systemd/system/node_exporter.service'
     - '/usr/local/bin/node_exporter'
@@ -43,22 +43,22 @@
 - name: 'Reload SystemD Daemon'
   ansible.builtin.shell: 'systemctl daemon-reload'
   when:
-    - prometheus_node_exporter_service_config_dir_state is changed
-    - prometheus_node_exporter_service_config_state is changed
-    - prometheus_node_exporter_local_install_removal_state is changed
+    - 'prometheus_node_exporter_service_config_dir_state is changed'
+    - 'prometheus_node_exporter_service_config_state is changed'
+    - 'prometheus_node_exporter_local_install_removal_state is changed'
 
 - name: 'Restart {{ prometheus_node_exporter_service_name }} service'
   ansible.builtin.service:
     name: '{{ prometheus_node_exporter_service_name }}'
-    state: restarted
+    state: 'restarted'
   when:
-    - prometheus_node_exporter_environment_config_state is changed
-    - prometheus_node_exporter_service_config_dir_state is changed
-    - prometheus_node_exporter_service_config_state is changed
-    - prometheus_node_exporter_local_install_removal_state is changed
+    - 'prometheus_node_exporter_environment_config_state is changed'
+    - 'prometheus_node_exporter_service_config_dir_state is changed'
+    - 'prometheus_node_exporter_service_config_state is changed'
+    - 'prometheus_node_exporter_local_install_removal_state is changed'
 
 - name: 'Ensure {{ prometheus_node_exporter_service_name }} service is enabled and started'
   ansible.builtin.service:
     name: '{{ prometheus_node_exporter_service_name }}'
-    enabled: yes
-    state: started
+    enabled: true
+    state: 'started'

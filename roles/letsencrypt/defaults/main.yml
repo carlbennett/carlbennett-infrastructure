@@ -1,21 +1,21 @@
 ---
-certbot_packages:
-- 'certbot'
-- 'python3-certbot'
-- 'python3-certbot-dns-cloudflare'
-- 'python3-certbot-nginx'
+letsencrypt_certbot_packages:
+  - 'certbot'
+  - 'python3-certbot'
+  - 'python3-certbot-dns-cloudflare'
+  - 'python3-certbot-nginx'
 
-certbot_renew_service: 'certbot-renew.service'
-certbot_renew_timer: 'certbot-renew.timer'
-certbot_renew_enabled: true
+letsencrypt_certbot_renew_service: 'certbot-renew.service'
+letsencrypt_certbot_renew_timer: 'certbot-renew.timer'
+letsencrypt_certbot_renew_enabled: true
 
-acme_challenge_type: http-01
-acme_directory: https://acme-v02.api.letsencrypt.org/directory
-acme_version: 2
-acme_email: certificate-reminders@example.com
-letsencrypt_dir: /etc/letsencrypt
-letsencrypt_keys_dir: /etc/letsencrypt/keys
-letsencrypt_csrs_dir: /etc/letsencrypt/csrs
-letsencrypt_certs_dir: /etc/letsencrypt/certs
-letsencrypt_account_key: /etc/letsencrypt/account/account.key
-domain_name: example.com
+letsencrypt_acme_challenge_type: 'http-01'
+letsencrypt_acme_directory: 'https://acme-v02.api.letsencrypt.org/directory'
+letsencrypt_acme_version: 2
+letsencrypt_acme_email: 'certificate-reminders@example.com'
+letsencrypt_dir: '/etc/letsencrypt'
+letsencrypt_keys_dir: '/etc/letsencrypt/keys'
+letsencrypt_csrs_dir: '/etc/letsencrypt/csrs'
+letsencrypt_certs_dir: '/etc/letsencrypt/certs'
+letsencrypt_account_key: '/etc/letsencrypt/account/account.key'
+letsencrypt_domain_name: 'example.com'

@@ -1,16 +1,16 @@
 ---
-- name: Install or update '{{ nginx_package_name }}' package
+- name: 'Install or update Nginx package'
   ansible.builtin.package:
     name: '{{ nginx_package_name }}'
-    state: latest
+    state: 'latest'
   register: nginx_package_state
 
-- name: Create nginx configuration directories
+- name: 'Create nginx configuration directories'
   ansible.builtin.file:
     path: '{{ item }}'
-    state: directory
-    owner: root
-    group: root
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
     mode: '755'
   with_items:
     - '/etc/nginx'
@@ -19,12 +19,12 @@
     - '/etc/nginx/vhost.d'
   register: nginx_config_dir_state
 
-- name: Update optional includable nginx configuration files
+- name: 'Update optional includable nginx configuration files'
   ansible.builtin.template:
     src: 'conf.d/{{ item }}.conf.j2'
     dest: '/etc/nginx/conf.d/{{ item }}.conf'
-    owner: root
-    group: root
+    owner: 'root'
+    group: 'root'
     mode: '444'
   with_items:
     - 'autoindex'
@@ -37,56 +37,56 @@
     - 'url-filter-wordpress'
   register: nginx_optional_config_state
 
-#- name: Update nginx vhost configuration files
-#  ansible.builtin.template:
-#    src: 'vhost.conf.j2'
-#    dest: '/etc/nginx/vhost.d/{{ item.name }}.conf'
-#    owner: root
-#    group: root
-#    mode: '444'
-#  loop: '{{ nginx_vhosts }}'
-#  register: nginx_vhost_config_state
+# - name: 'Update nginx vhost configuration files'
+#   ansible.builtin.template:
+#     src: 'vhost.conf.j2'
+#     dest: '/etc/nginx/vhost.d/{{ item.name }}.conf'
+#     owner: 'root'
+#     group: 'root'
+#     mode: '444'
+#   loop: '{{ nginx_vhosts }}'
+#   register: nginx_vhost_config_state
 
-- name: Test nginx configuration
+- name: 'Test nginx configuration'
   ansible.builtin.shell: 'nginx -t'
   when:
-    - nginx_package_state is changed
-    - nginx_config_dir_state is changed
-    - nginx_optional_config_state is changed
-#    - nginx_vhost_config_state is changed
+    - 'nginx_package_state is changed'
+    - 'nginx_config_dir_state is changed'
+    - 'nginx_optional_config_state is changed'
+#   - 'nginx_vhost_config_state is changed'
 
-- name: Restart nginx
+- name: 'Restart nginx'
   ansible.builtin.service:
-    name: '{{ nginx_service_name }}'
-    state: restarted
+    name: "{{ nginx_service_name }}"
+    state: 'restarted'
   when:
-    - nginx_package_state is changed
-    - nginx_config_dir_state is changed
-    - nginx_optional_config_state is changed
-    #- nginx_vhost_config_state is changed
+    - 'nginx_package_state is changed'
+    - 'nginx_config_dir_state is changed'
+    - 'nginx_optional_config_state is changed'
+#   - 'nginx_vhost_config_state is changed'
 
-- name: Enable and start '{{ nginx_service_name }}'
+- name: "Enable and start '{{ nginx_service_name }}'"
   ansible.builtin.service:
-    name: '{{ nginx_service_name }}'
-    enabled: yes
-    state: started
+    name: "{{ nginx_service_name }}"
+    enabled: true
+    state: 'started'
 
-- name: Permit traffic in default zone for 'http' service
+- name: 'Permit traffic in default firewalld zone for http service'
   ansible.posix.firewalld:
-    service: http
-    permanent: yes
-    state: enabled
+    service: 'http'
+    permanent: true
+    state: 'enabled'
   register: firewalld_permit_http_state
 
-- name: Permit traffic in default zone for 'https' service
+- name: 'Permit traffic in default firewalld zone for https service'
   ansible.posix.firewalld:
-    service: https
-    permanent: yes
-    state: enabled
+    service: 'https'
+    permanent: true
+    state: 'enabled'
   register: firewalld_permit_https_state
 
-- name: Reload firewalld
+- name: 'Reload firewalld'
   ansible.builtin.shell: 'firewall-cmd --reload'
   when:
-    - firewalld_permit_http_state is changed
-    - firewalld_permit_https_state is changed
+    - 'firewalld_permit_http_state is changed'
+    - 'firewalld_permit_https_state is changed'

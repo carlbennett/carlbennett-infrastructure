@@ -4,11 +4,11 @@ nginx_package_name: 'nginx'
 nginx_service_name: 'nginx'
 
 nginx_vhosts:
-- name: '_ansible'
-  server:
-  - listen:    '*:4269 default_server'
-  - listen: '[::]:4269 default_server'
-  - server_name: '_'
-  - root: '/usr/share/nginx/html'
-  - include: '/etc/nginx/conf.d/gzip.conf'
-  - include: '/etc/nginx/conf.d/url-filter*.conf'
+  - name: '_ansible'
+    server:
+    - listen:    '*:4269 default_server'
+    - listen: '[::]:4269 default_server'
+    - server_name: '_'
+    - root: '/usr/share/nginx/html'
+    - include: '/etc/nginx/conf.d/gzip.conf'
+    - include: '/etc/nginx/conf.d/url-filter*.conf'

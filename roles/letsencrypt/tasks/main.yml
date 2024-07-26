@@ -1,35 +1,35 @@
 ---
-- name: 'Install certbot packages'
+- name: "Install Let's Encrypt certbot packages"
   ansible.builtin.package:
-    name: '{{ certbot_packages }}'
-    state: latest
+    name: '{{ letsencrypt_certbot_packages }}'
+    state: 'latest'
 
-- name: 'Ensure LetsEncrypt Renewal Timer is Disabled and Stopped'
+- name: "Ensure Let's Encrypt Renewal Timer is Disabled and Stopped"
   ansible.builtin.service:
-    name: '{{ certbot_renew_timer }}'
+    name: '{{ letsencrypt_certbot_renew_timer }}'
     enabled: false
-    state: stopped
-  when: certbot_renew_enabled is false
+    state: 'stopped'
+  when: 'letsencrypt_certbot_renew_enabled is false'
 
-- name: 'Ensure LetsEncrypt Renewal Timer is Enabled and Started'
+- name: "Ensure Let's Encrypt Renewal Timer is Enabled and Started"
   ansible.builtin.service:
-    name: '{{ certbot_renew_timer }}'
+    name: '{{ letsencrypt_certbot_renew_timer }}'
     enabled: true
-    state: started
-  when: certbot_renew_enabled is true
+    state: 'started'
+  when: 'letsencrypt_certbot_renew_enabled is true'
 
-- name: 'Create LetsEncrypt directories'
+- name: "Create Let's Encrypt directories"
   ansible.builtin.file:
     path: '/etc/letsencrypt/{{ item }}'
-    state: directory
-    owner: root
-    group: root
-    mode: u=rwx,g=x,o=x
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: 'u=rwx,g=x,o=x'
   with_items:
-    - account
-    - certs
-    - csrs
-    - keys
+    - 'account'
+    - 'certs'
+    - 'csrs'
+    - 'keys'
 
 - name: "Generate a Let's Encrypt account key"
   ansible.builtin.shell: "if [ ! -f {{ letsencrypt_account_key }} ]; then openssl genrsa 4096 | sudo tee {{ letsencrypt_account_key }}; fi"
@@ -40,50 +40,50 @@
 - name: "Generate Let's Encrypt CSR"
   ansible.builtin.shell: "openssl req -new -sha256 -key /etc/letsencrypt/keys/{{ domain_name }}.key -subj \"/CN={{ domain_name }}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"\n[SAN]\nsubjectAltName=DNS:{{ domain_name }},DNS:www.{{ domain_name }}\")) | sudo tee /etc/letsencrypt/csrs/{{ domain_name }}.csr"
   args:
-    executable: /bin/bash
+    executable: '/bin/bash'
 
 - name: "Begin Let's Encrypt challenges"
   letsencrypt:
-    acme_directory: "{{ acme_directory }}"
-    acme_version: "{{ acme_version }}"
+    acme_directory: "{{ letsencrypt_acme_directory }}"
+    acme_version: "{{ letsencrypt_acme_version }}"
     account_key_src: "{{ letsencrypt_account_key }}"
-    account_email: "{{ acme_email }}"
+    account_email: "{{ letsencrypt_acme_email }}"
     terms_agreed: 1
-    challenge: "{{ acme_challenge_type }}"
-    csr: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
-    dest: "{{ letsencrypt_certs_dir }}/{{ domain_name }}.crt"
-    fullchain_dest: "{{ letsencrypt_certs_dir }}/fullchain_{{ domain_name }}.crt"
+    challenge: "{{ letsencrypt_acme_challenge_type }}"
+    csr: "{{ letsencrypt_csrs_dir }}/{{ letsencrypt_domain_name }}.csr"
+    dest: "{{ letsencrypt_certs_dir }}/{{ letsencrypt_domain_name }}.crt"
+    fullchain_dest: "{{ letsencrypt_certs_dir }}/fullchain_{{ letsencrypt_domain_name }}.crt"
     remaining_days: 91
   register: acme_challenge_your_domain
 
-- name: "Create .well-known/acme-challenge directory"
+- name: 'Create .well-known/acme-challenge directory'
   ansible.builtin.file:
-    path: /var/www/html/.well-known/acme-challenge
-    state: directory
-    owner: root
-    group: root
-    mode: u=rwx,g=rx,o=rx
+    path: '/var/www/html/.well-known/acme-challenge'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: 'u=rwx,g=rx,o=rx'
 
-- name: "Implement http-01 challenge files"
+- name: 'Implement http-01 challenge files'
   ansible.builtin.copy:
     content: "{{ acme_challenge_your_domain['challenge_data'][item]['http-01']['resource_value'] }}"
     dest: "/var/www/html/{{ acme_challenge_your_domain['challenge_data'][item]['http-01']['resource'] }}"
-    owner: root
-    group: root
-    mode: u=rw,g=r,o=r
+    owner: 'root'
+    group: 'root'
+    mode: 'u=rw,g=r,o=r'
   with_items:
-    - "{{ domain_name }}"
-    - "www.{{ domain_name }}"
+    - "{{ letsencrypt_domain_name }}"
+    - "www.{{ letsencrypt_domain_name }}"
 
 - name: "Complete Let's Encrypt challenges"
   letsencrypt:
-    acme_directory: "{{ acme_directory }}"
-    acme_version: "{{ acme_version }}"
+    acme_directory: "{{ letsencrypt_acme_directory }}"
+    acme_version: "{{ letsencrypt_acme_version }}"
     account_key_src: "{{ letsencrypt_account_key }}"
-    account_email: "{{ acme_email }}"
-    challenge: "{{ acme_challenge_type }}"
-    csr: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
-    dest: "{{ letsencrypt_certs_dir }}/{{ domain_name }}.crt"
-    chain_dest: "{{ letsencrypt_certs_dir }}/chain_{{ domain_name }}.crt"
-    fullchain_dest: "{{ letsencrypt_certs_dir }}/fullchain_{{ domain_name }}"
+    account_email: "{{ letsencrypt_acme_email }}"
+    challenge: "{{ letsencrypt_acme_challenge_type }}"
+    csr: "{{ letsencrypt_csrs_dir }}/{{ letsencrypt_domain_name }}.csr"
+    dest: "{{ letsencrypt_certs_dir }}/{{ letsencrypt_domain_name }}.crt"
+    chain_dest: "{{ letsencrypt_certs_dir }}/chain_{{ letsencrypt_domain_name }}.crt"
+    fullchain_dest: "{{ letsencrypt_certs_dir }}/fullchain_{{ letsencrypt_domain_name }}"
     data: "{{ acme_challenge_your_domain }}"

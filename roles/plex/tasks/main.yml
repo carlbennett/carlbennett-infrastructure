@@ -1,32 +1,32 @@
 ---
-- name: "Ensure '{{ plex_package_name }}' package is installed"
+- name: 'Ensure Plex package is installed'
   ansible.builtin.package:
     name: "{{ plex_package_name }}"
-    state: present
+    state: 'present'
 
-- name: "Copy '{{ plex_service_firewalld }}' service definition to firewalld"
+- name: 'Copy Plex firewalld service definition'
   ansible.builtin.template:
-    src: templates/firewalld/plexmediaserver_service.xml.j2
+    src: 'templates/firewalld/plexmediaserver_service.xml.j2'
     dest: "/etc/firewalld/services/{{ plex_service_firewalld }}.xml"
-    owner: root
-    group: root
+    owner: 'root'
+    group: 'root'
     mode: '444'
   register: plex_service_firewalld_state
 
-- name: Reload firewalld
+- name: 'Reload firewalld'
   ansible.builtin.service:
-    name: firewalld
-    state: reloaded
+    name: 'firewalld'
+    state: 'reloaded'
   when: plex_service_firewalld_state is changed
 
-- name: "Permit traffic in default zone for '{{ plex_service_firewalld }}' service"
+- name: 'Permit traffic in default firewalld zone for Plex service'
   ansible.posix.firewalld:
     service: "{{ plex_service_firewalld }}"
-    permanent: yes
-    state: enabled
+    permanent: true
+    state: 'enabled'
 
-- name: "Enable and start '{{ plex_service_systemd }}'"
+- name: 'Enable and start Plex service'
   ansible.builtin.service:
     name: "{{ plex_service_systemd }}"
-    enabled: yes
-    state: started
+    enabled: true
+    state: 'started'

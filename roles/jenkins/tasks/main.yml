@@ -1,57 +1,56 @@
 ---
-- name: "Ensure '{{ jenkins_repo_file_name }}' repo template is present"
+- name: 'Ensure Jenkins repository is present'
   ansible.builtin.template:
-    src: jenkins/jenkins.repo.j2
-    dest: '/etc/yum.repos.d/{{ jenkins_repo_file_name }}.repo'
-    owner: root
-    group: root
+    src: 'jenkins/jenkins.repo.j2'
+    dest: "/etc/yum.repos.d/{{ jenkins_repo_file_name }}.repo"
+    owner: 'root'
+    group: 'root'
     mode: '444'
 
 - name: 'Ensure packages are installed'
   ansible.builtin.package:
     name: "{{ jenkins_packages }}"
-    state: present
+    state: 'present'
 
 - name: 'Copy {{ jenkins_environment_file }} service environment configuration'
   ansible.builtin.template:
-    src: jenkins/jenkins.env.j2
-    dest: '/etc/sysconfig/{{ jenkins_environment_file }}'
-    owner: root
-    group: root
+    src: 'jenkins/jenkins.env.j2'
+    dest: "/etc/sysconfig/{{ jenkins_environment_file }}"
+    owner: 'root'
+    group: 'root'
     mode: '444'
   register: jenkins_environment_config_state
 
 - name: 'Reload SystemD Daemon'
-  ansible.builtin.shell: 'systemctl daemon-reload'
-  when:
-    - jenkins_environment_config_dir_state is changed
-    - jenkins_environment_config_state is changed
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  when: jenkins_environment_config_state is changed
 
 # TODO
 
-- name: "Copy '{{ jenkins_service_firewalld }}' service definition to firewalld"
+- name: 'Copy Jenkins firewalld service definition'
   ansible.builtin.template:
-    src: firewalld/jenkins_service.xml.j2
+    src: 'firewalld/jenkins_service.xml.j2'
     dest: "/etc/firewalld/services/{{ jenkins_service_firewalld }}.xml"
-    owner: root
-    group: root
+    owner: 'root'
+    group: 'root'
     mode: '444'
   register: jenkins_service_firewalld_state
 
-- name: Reload firewalld
+- name: 'Reload firewalld'
   ansible.builtin.service:
-    name: firewalld
-    state: reloaded
+    name: 'firewalld'
+    state: 'reloaded'
   when: jenkins_service_firewalld_state is changed
 
-- name: "Permit traffic in default zone for '{{ jenkins_service_firewalld }}' service"
+- name: 'Permit traffic in default firewalld zone for Jenkins service'
   ansible.posix.firewalld:
     service: "{{ jenkins_service_firewalld }}"
-    permanent: yes
-    state: enabled
+    permanent: true
+    state: 'enabled'
 
-- name: "Enable and start '{{ jenkins_service_systemd }}'"
-  ansible.builtin.service:
+- name: 'Enable and start Jenkins service'
+  ansible.builtin.systemd_service:
     name: "{{ jenkins_service_systemd }}"
-    enabled: yes
-    state: started
+    enabled: true
+    state: 'started'
