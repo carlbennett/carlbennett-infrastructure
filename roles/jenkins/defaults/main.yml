@@ -1,8 +1,8 @@
 ---
-jenkins_packages: 
-- 'fontconfig'
-- 'java-11-openjdk-headless'
-- 'jenkins'
+jenkins_packages:
+  - 'fontconfig'
+  - 'java-11-openjdk-headless'
+  - 'jenkins'
 
 jenkins_repo_file_name: 'jenkins'
 

@@ -1,5 +1,5 @@
 ---
-- name: Ensure latest '{{ grafana_package_name }}' package is installed
+- name: Ensure latest Grafana package is installed
   ansible.builtin.package:
     name: "{{ grafana_package_name }}"
     state: 'latest'
@@ -12,10 +12,10 @@
     group: 'root'
     mode: '444'
 
-- name: Enable and start '{{ grafana_service_name }}' service
+- name: Enable and start Grafana service
   ansible.builtin.service:
     name: "{{ grafana_service_name }}"
-    enabled: yes
+    enabled: true
     state: 'started'
 
 - name: Install or update Grafana plugins

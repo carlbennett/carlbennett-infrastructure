@@ -16,13 +16,13 @@ grafana_datasources: []
 
 # Grafana plugins to install and keep updated.
 grafana_plugins:
-- 'cloudflare-app'
-- 'grafana-clock-panel'
-- 'grafana-github-datasource'
-#- 'grafana-gitlab-datasource'
-- 'grafana-image-renderer'
-- 'grafana-simple-json-datasource'
-- 'grafana-worldmap-panel'
+  - 'cloudflare-app'
+  - 'grafana-clock-panel'
+  - 'grafana-github-datasource'
+# - 'grafana-gitlab-datasource'
+  - 'grafana-image-renderer'
+  - 'grafana-simple-json-datasource'
+  - 'grafana-worldmap-panel'
 
 # Legacy Grafana API key.
 grafana_api_key: null
