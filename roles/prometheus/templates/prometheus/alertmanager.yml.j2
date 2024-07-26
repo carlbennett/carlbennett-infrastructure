@@ -6,10 +6,10 @@
 global:
   # The smarthost and SMTP sender used for mail notifications.
   smtp_from: '{{ prometheus_alertmanager_smtp_from }}'
-  smtp_smarthost: '{{ smtp_host }}'
+  smtp_smarthost: '{{ prometheus_alertmanager_smtp_host }}'
   smtp_hello: '{{ ansible_facts['fqdn'] }}'
-  smtp_auth_username: '{{ smtp_user }}'
-  smtp_auth_password: '{{ smtp_password }}'
+  smtp_auth_username: '{{ prometheus_alertmanager_smtp_user }}'
+  smtp_auth_password: '{{ prometheus_alertmanager_smtp_password }}'
 
 # The directory from which notification templates are read.
 templates:

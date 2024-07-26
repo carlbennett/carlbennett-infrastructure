@@ -106,3 +106,7 @@ base_packages:
     - zip
 
 base_ssmtp_config_path: '/etc/ssmtp/ssmtp.conf'
+base_ssmtp_host: 'localhost:25'
+base_ssmtp_password: ''
+base_ssmtp_rewritedomain: '{{ ansible_facts['fqdn'] }}'
+base_ssmtp_username: ''

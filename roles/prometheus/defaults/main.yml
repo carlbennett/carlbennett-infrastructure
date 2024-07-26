@@ -14,8 +14,23 @@ prometheus_global_evaluation_interval: '15s'
 # Scrape timeout is set to the global default (10s).
 prometheus_global_scrape_timeout: '10s'
 
+# The domain name that is used for SMTP.
+prometheus_alertmanager_smtp_rewritedomain: '{{ ansible_facts['fqdn'] }}'
+
+# The default email address used for alerts.
+prometheus_alertmanager_default_email: 'alertmanager@{{ prometheus_alertmanager_smtp_rewritedomain }}'
+
 # The name used in the "From" header in alert emails.
-prometheus_alertmanager_smtp_from: 'prometheus-alertmanager@{{ smtp_rewritedomain }}'
+prometheus_alertmanager_smtp_from: 'prometheus-alertmanager@{{ prometheus_alertmanager_smtp_rewritedomain }}'
+
+# The endpoint to connect to for SMTP.
+prometheus_alertmanager_smtp_host: 'localhost:25'
+
+# Credential username for SMTP.
+prometheus_alertmanager_smtp_username: ''
+
+# Credential password for SMTP.
+prometheus_alertmanager_smtp_password: ''
 
 # The labels by which incoming alerts are grouped together. For example,
 # multiple alerts coming in for cluster=A and alertname=LatencyHigh would

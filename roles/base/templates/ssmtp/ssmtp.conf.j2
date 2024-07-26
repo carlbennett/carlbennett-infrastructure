@@ -19,10 +19,10 @@ root=
 # mailhub=mail.your.domain
 # Example for SSL encrypted connection
 # mailhub=mail.your.domain:465
-mailhub={{ smtp_host }}
+mailhub={{ base_ssmtp_host }}
 
 # Where will the mail seem to come from?
-RewriteDomain={{ smtp_rewritedomain }}
+RewriteDomain={{ base_ssmtp_rewritedomain }}
 
 # The full hostname
 #Hostname=
@@ -43,8 +43,8 @@ TLS_CA_File=/etc/pki/tls/certs/ca-bundle.crt
 # Use this RSA certificate.
 #TLSCert=/etc/pki/tls/private/ssmtp.pem
 
-AuthUser={{ smtp_user }}
-AuthPass={{ smtp_password }}
+AuthUser={{ base_ssmtp_username }}
+AuthPass={{ base_ssmtp_password }}
 AuthMethod=PLAIN
 
 # Get enhanced (*really* enhanced) debugging information in the logs
