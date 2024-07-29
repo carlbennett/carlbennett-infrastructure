@@ -15,7 +15,7 @@ prometheus_global_evaluation_interval: '15s'
 prometheus_global_scrape_timeout: '10s'
 
 # The domain name that is used for SMTP.
-prometheus_alertmanager_smtp_rewritedomain: '{{ ansible_facts['fqdn'] }}'
+prometheus_alertmanager_smtp_rewritedomain: "{{ ansible_facts['fqdn'] }}"
 
 # The default email address used for alerts.
 prometheus_alertmanager_default_email: 'alertmanager@{{ prometheus_alertmanager_smtp_rewritedomain }}'
