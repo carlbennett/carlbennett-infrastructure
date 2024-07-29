@@ -2,7 +2,7 @@
 - name: "Install Let's Encrypt certbot packages"
   ansible.builtin.package:
     name: '{{ letsencrypt_certbot_packages }}'
-    state: 'latest'
+    state: 'present'
 
 - name: "Ensure Let's Encrypt Renewal Timer is Disabled and Stopped"
   ansible.builtin.service:
