@@ -1,6 +1,6 @@
 ---
 # The package name of the node_exporter daemon.
-prometheus_node_exporter_package_name: 'golang-github-prometheus-node-exporter'
+prometheus_node_exporter_package_name: 'node-exporter'
 
 # The service name of the node_exporter daemon (without '.service').
 prometheus_node_exporter_service_name: 'prometheus-node-exporter'
